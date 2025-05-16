@@ -25,7 +25,8 @@ router.post(
   userController.LoginUser
 );
 
-router.get("/getusers", userMiddleware.userAuth, userController.getUsers);
+router.get("/getuser", userMiddleware.userAuth, userController.getUsers);
+router.get("/getallusers",  userController.getalltUsers);
 
 router.get('/logout', userMiddleware.userAuth , userController.LogoutUser)
 
