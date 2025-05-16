@@ -87,3 +87,39 @@ module.exports.LoginUser = async (req, res) => {
     });
   }
 };
+
+module.exports.getUsers = async (req, res) => {
+  try {
+    const user = await userModel.findById(req.user._id).select("-password");
+
+    if (!user) {
+      return res.status(400).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      message: "Users fetched successfully",
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};
+
+module.exports.LogoutUser = async (req, res) => {
+  try {
+    res.clearCookie("token");
+    res.status(200).json({
+      message: "User logged out successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: error.message,
+    });
+  }
+};

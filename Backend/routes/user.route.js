@@ -1,6 +1,7 @@
 const router = require("express").Router();
 const userController = require("../controllers/user.controller");
 const { body } = require("express-validator");
+const userMiddleware = require("../middlewares/user.middleware");
 
 router.post(
   "/register",
@@ -23,5 +24,9 @@ router.post(
   ],
   userController.LoginUser
 );
+
+router.get("/getusers", userMiddleware.userAuth, userController.getUsers);
+
+router.get('/logout', userMiddleware.userAuth , userController.LogoutUser)
 
 module.exports = router;
