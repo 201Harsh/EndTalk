@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -11,11 +11,11 @@ import {
   ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
 import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
+import Axios from "../Config/Axios";
 
 const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
-  const [name, setname] = useState("");
   const [email, setemail] = useState("");
   const [password, setpassword] = useState("");
 
@@ -23,13 +23,32 @@ const Login = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleForm = (e) => {
+  const Navigate = useNavigate();
+
+  const handleForm = async (e) => {
     e.preventDefault();
-    const UserDate = [name, email, password];
-    console.log(UserDate);
-    setname("");
-    setemail("");
-    setpassword("");
+
+    try {
+      const response = await Axios.post("/users/login", {
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
+        const UserData = response.data.User;
+        localStorage.setItem("name", UserData.name);
+
+        Navigate("/chat");
+        setemail("");
+        setpassword("");
+      }
+
+      console.log(response)
+
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (

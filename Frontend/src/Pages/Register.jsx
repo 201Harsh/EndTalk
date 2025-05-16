@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   EyeIcon,
   EyeSlashIcon,
@@ -11,6 +11,7 @@ import {
   ShieldCheckIcon,
 } from "@heroicons/react/24/outline";
 import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
+import Axios from "../Config/Axios";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -23,13 +24,31 @@ const Register = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleForm = (e) => {
+  const Navigate = useNavigate();
+
+  const handleForm = async (e) => {
     e.preventDefault();
-    const UserDate = [name, email, password];
-    console.log(UserDate);
-    setname("");
-    setemail("");
-    setpassword("");
+
+    try {
+      const response = await Axios.post("/users/register", {
+        name,
+        email,
+        password,
+      });
+
+      if (response.status === 200) {
+        localStorage.setItem("token", response.data.token);
+        const UserData = response.data.Newuser;
+        localStorage.setItem("name", UserData.name);
+
+        Navigate("/chat");
+        setname("");
+        setemail("");
+        setpassword("");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -44,7 +63,9 @@ const Register = () => {
             <p className="text-sm md:text-base text-gray-200 mt-6 md:mt-8">
               Powered by{" "}
               <span className="font-semibold text-base md:text-lg bg-clip-text text-transparent bg-gradient-to-r from-teal-400 to-sky-400">
-                <a href="https://emoaichatbot.onrender.com/" target="_blank">EndGaming AI</a>
+                <a href="https://emoaichatbot.onrender.com/" target="_blank">
+                  EndGaming AI
+                </a>
               </span>
             </p>
           </div>
@@ -52,7 +73,7 @@ const Register = () => {
           {/* Right side with form */}
           <div className="w-full md:w-1/2 flex flex-col justify-center pl-0 md:pl-10">
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-6 md:mb-8">
-              Join {" "}
+              Join{" "}
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-emerald-300 to-cyan-400">
                 EndTalk
               </span>
