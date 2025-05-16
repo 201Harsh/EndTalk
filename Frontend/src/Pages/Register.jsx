@@ -66,7 +66,7 @@ const Register = () => {
               <div className="relative">
                 <label
                   htmlFor="name"
-                  className="block text-sm font-medium mb-1 flex items-center"
+                  className=" text-sm font-medium mb-1 flex items-center"
                 >
                   <UserIcon className="h-4 w-4 mr-2" />
                   <span>Full Name</span>
@@ -91,7 +91,7 @@ const Register = () => {
               <div className="relative">
                 <label
                   htmlFor="email"
-                  className="block text-sm font-medium mb-1 flex items-center"
+                  className="text-sm font-medium mb-1 flex items-center"
                 >
                   <EnvelopeIcon className="h-4 w-4 mr-2" />
                   <span>Email Address</span>
@@ -115,7 +115,7 @@ const Register = () => {
               <div className="relative">
                 <label
                   htmlFor="password"
-                  className="block text-sm font-medium mb-1 flex items-center"
+                  className=" text-sm font-medium mb-1 flex items-center"
                 >
                   <LockClosedIcon className="h-4 w-4 mr-2" />
                   <span>Password</span>
