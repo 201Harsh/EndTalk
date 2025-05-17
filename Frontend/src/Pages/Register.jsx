@@ -44,7 +44,7 @@ const Register = () => {
 
         toast.success(response.data.message, {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: false,
           pauseOnHover: true,
@@ -66,7 +66,7 @@ const Register = () => {
       if (error.response.data.message) {
         toast.error(error.response.data.message, {
           position: "top-right",
-          autoClose: 5000,
+          autoClose: 3000,
           hideProgressBar: false,
           closeOnClick: false,
           pauseOnHover: true,
@@ -83,7 +83,7 @@ const Register = () => {
         errorArray.forEach((error) => {
           toast.error(error.msg, {
             position: "top-right",
-            autoClose: 5000,
+            autoClose: 3000,
             hideProgressBar: false,
             closeOnClick: false,
             pauseOnHover: true,
