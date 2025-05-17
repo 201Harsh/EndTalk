@@ -62,7 +62,7 @@ module.exports.LoginUser = async (req, res) => {
       });
     }
 
-    const isMatched = User.ComparePassword(password);
+    const isMatched = await User.ComparePassword(password);
 
     if (!isMatched) {
       return res.status(400).json({

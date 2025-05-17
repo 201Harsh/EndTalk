@@ -12,6 +12,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { ArrowLongRightIcon } from "@heroicons/react/20/solid";
 import Axios from "../Config/Axios";
+import { Bounce, toast } from "react-toastify";
 
 const Register = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -41,13 +42,58 @@ const Register = () => {
         const UserData = response.data.Newuser;
         localStorage.setItem("name", UserData.name);
 
-        Navigate("/chat");
+        toast.success(response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+
+        setTimeout(() => {
+          Navigate("/chat");
+        }, 1500);
+
         setname("");
         setemail("");
         setpassword("");
       }
     } catch (error) {
-      console.log(error);
+      if (error.response.data.message) {
+        toast.error(error.response.data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: Bounce,
+        });
+      }
+
+      const errorArray = error.response.data.errors;
+
+      if (errorArray) {
+        errorArray.forEach((error) => {
+          toast.error(error.msg, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+            transition: Bounce,
+          });
+        });
+      }
     }
   };
 
