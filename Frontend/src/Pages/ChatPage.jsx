@@ -10,6 +10,11 @@ import {
   Bars3Icon,
 } from "@heroicons/react/24/outline";
 import AxiosInstance from "../Config/Axios";
+import {
+  initializeSocket,
+  SendMessageToUser,
+  ReceiveMessageToUser,
+} from "../Config/SoketIO";
 
 const ChatPage = () => {
   const [selectedChat, setSelectedChat] = useState(null);
@@ -54,18 +59,18 @@ const ChatPage = () => {
           Authorization: `Bearer ${token}`,
         },
       });
-      
+
       // Transform API response to match chat structure
-      const formattedChats = response.data.users.map(user => ({
+      const formattedChats = response.data.users.map((user) => ({
         id: user._id || user.id,
         name: user.name || user.username,
         lastMessage: user.lastMessage || "No messages yet",
         time: formatLastMessageTime(user.lastMessageTime),
         unread: user.unreadCount || 0,
         online: user.isOnline || false,
-        avatar: user.avatar
+        avatar: user.avatar,
       }));
-      
+
       setChats(formattedChats);
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch users");
@@ -80,18 +85,24 @@ const ChatPage = () => {
     if (!timestamp) return "Just now";
     const date = new Date(timestamp);
     const now = new Date();
-    
+
     if (date.toDateString() === now.toDateString()) {
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      return date.toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     } else if (date.getDate() === now.getDate() - 1) {
       return "Yesterday";
     } else {
-      return date.toLocaleDateString([], { month: 'short', day: 'numeric' });
+      return date.toLocaleDateString([], { month: "short", day: "numeric" });
     }
   };
 
   // Handle window resize
   useEffect(() => {
+    initializeSocket();
+    getUsersData();
+
     const handleResize = () => {
       const mobile = window.innerWidth < 768;
       setIsMobile(mobile);
@@ -102,33 +113,8 @@ const ChatPage = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Load users on component mount
-  useEffect(() => {
-    getUsersData();
-  }, []);
-
   const handleChatSelect = (chat) => {
     setSelectedChat(chat);
-    // For now, we'll keep the mock messages
-    // TODO: Replace with actual API call to fetch messages for this chat
-    setMessages([
-      { id: 1, text: "Hey there!", time: "10:00 AM", sent: false },
-      { id: 2, text: "Hi! How are you?", time: "10:02 AM", sent: true },
-      {
-        id: 3,
-        text: "I was wondering if we could meet tomorrow?",
-        time: "10:05 AM",
-        sent: false,
-      },
-      {
-        id: 4,
-        text: "Sure, what time works for you?",
-        time: "10:10 AM",
-        sent: true,
-      },
-      { id: 5, text: "How about 2 PM?", time: "10:15 AM", sent: false },
-      { id: 6, text: "Perfect! See you then", time: "10:20 AM", sent: true },
-    ]);
     if (isMobile) setShowSidebar(false);
   };
 
@@ -147,11 +133,16 @@ const ChatPage = () => {
     };
 
     setMessages([...messages, newMessage]);
+
+    SendMessageToUser({
+      message: message,
+    });
+
     setMessage("");
   };
 
   // Filter chats based on search query
-  const filteredChats = chats.filter(chat =>
+  const filteredChats = chats.filter((chat) =>
     chat.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -169,9 +160,9 @@ const ChatPage = () => {
       return (
         <div className="p-4 text-center text-red-400">
           {error}
-          <button 
+          <button
             onClick={getUsersData}
-            className="mt-2 text-cyan-400 hover:text-cyan-300"
+            className="mt-2 ml-2 text-cyan-400 hover:text-cyan-300"
           >
             Retry
           </button>
@@ -182,7 +173,9 @@ const ChatPage = () => {
     if (filteredChats.length === 0) {
       return (
         <div className="p-4 text-center text-white/70">
-          {searchQuery ? "No matching conversations found" : "No conversations yet"}
+          {searchQuery
+            ? "No matching conversations found"
+            : "No conversations yet"}
         </div>
       );
     }
@@ -197,8 +190,8 @@ const ChatPage = () => {
       >
         <div className="relative">
           {chat.avatar ? (
-            <img 
-              src={chat.avatar} 
+            <img
+              src={chat.avatar}
               alt={chat.name}
               className="h-10 w-10 rounded-full object-cover"
             />
@@ -219,9 +212,7 @@ const ChatPage = () => {
             </span>
           </div>
           <div className="flex justify-between items-center">
-            <p className="text-sm text-white/70 truncate">
-              {chat.lastMessage}
-            </p>
+            <p className="text-sm text-white/70 truncate">{chat.lastMessage}</p>
             {chat.unread > 0 && (
               <span className="bg-cyan-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center flex-shrink-0 ml-2">
                 {chat.unread}
@@ -331,8 +322,8 @@ const ChatPage = () => {
                   )}
                   <div className="relative">
                     {selectedChat.avatar ? (
-                      <img 
-                        src={selectedChat.avatar} 
+                      <img
+                        src={selectedChat.avatar}
                         alt={selectedChat.name}
                         className="h-10 w-10 rounded-full object-cover"
                       />
