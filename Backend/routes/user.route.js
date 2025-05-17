@@ -7,7 +7,7 @@ router.post(
   "/register",
   [
     body("name").isLength(2).withMessage("Name must be at least 2 characters"),
-    body("email").isEmail().withMessage("Email is required"),
+    body("email").isEmail().withMessage("Enter a Valid Email"),
     body("password")
       .isLength(6)
       .withMessage("Password must be at least 6 characters"),
@@ -19,8 +19,8 @@ router.post(
 router.post(
   "/login",
   [
-    body("email").isEmail().withMessage("Email is required"),
-    body("password").isLength({ min: 6 }).withMessage("Password is required"),
+    body("email").isEmail().withMessage("Enter a Valid Email"),
+    body("password").isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
   ],
   userController.LoginUser
 );

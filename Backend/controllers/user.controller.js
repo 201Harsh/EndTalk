@@ -33,7 +33,7 @@ module.exports.RegisterUser = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "User created successfully",
+      message: "Registered successfully",
       Newuser,
       token,
     });
@@ -77,7 +77,7 @@ module.exports.LoginUser = async (req, res) => {
     });
 
     res.status(200).json({
-      message: "User logged in successfully",
+      message: "Logged in successfully",
       User,
       token,
     });
